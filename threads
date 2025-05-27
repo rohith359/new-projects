@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Voting System</title>
+    <style>
+        /* Reset and base styling */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #ff9933, #ffffff, #138808); /* Indian flag colors */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+            color: #070707;
+            position: relative;
+        }
+
+        .container {
+            background-color: lavender; /* Lavender background for the inner working pages */
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            text-align: center;
+            width: 400px;
+            display: none;
+            position: relative;
+            z-index: 2;
+        }
+
+        .active {
+            display: block;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            color: #0d00ff;
+            text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.4);
+            margin-bottom: 20px;
+        }
+
+        h2 {
+            font-size: 1.8em;
+            margin-bottom: 15px;
+            color: #ffd700;
+        }
+
+        .button {
+            display: inline-block;
+            padding: 12px 24px;
+            font-size: 1em;
+            font-weight: bold;
+            color: #100e0e;
+            border: none;
+            background: linear-gradient(to right, #0294ad, #ff4b2b);
+            border-radius: 8px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+            margin: 10px; /* Added space between buttons */
+        }
+
+        .button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .party {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 15px 0;
+        }
+
+        .party-symbol {
+            width: 80px;
+            height: 80px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s ease;
+        }
+
+        .party-symbol:hover {
+            transform: scale(1.1);
+        }
+
+        .party-label {
+            margin-top: 8px;
+            font-size: 1em;
+            color: #0a0909;
+            font-weight: bold;
+        }
+
+        .feedback {
+            color: rgb(20, 19, 19);
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        .success {
+            color: green;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Main Menu -->
+    <div id="main-menu" class="container active">
+        <h1>AI Voting System</h1>
+        <button class="button" onclick="showSection('iris-verification')">Start Voting</button>
+        <button class="button" onclick="showSection('admin-login')">Admin Panel</button>
+    </div>
+
+    <!-- Iris Verification -->
+    <div id="iris-verification" class="container">
+        <h2>Iris Verification</h2>
+        <input type="text" id="irisData" class="input-field" placeholder="Enter Iris Code">
+        <button class="button" onclick="verifyIris()">Verify</button>
+        <p id="irisFeedback" class="feedback"></p>
+    </div>
+
+    <!-- Voting Section -->
+    <div id="voting-section" class="container">
+        <h2>Vote for a Candidate</h2>
+        <div class="party">
+            <div>
+                <img src="https://via.placeholder.com/80x80.png?text=TDP" alt="TDP Symbol" class="party-symbol">
+                <p class="party-label">TDP</p>
+            </div>
+            <button class="button" onclick="selectVote('TDP')">Vote</button>
+        </div>
+        <div class="party">
+            <div>
+                <img src="https://via.placeholder.com/80x80.png?text=JSP" alt="JSP Symbol" class="party-symbol">
+                <p class="party-label">JSP</p>
+            </div>
+            <button class="button" onclick="selectVote('JSP')">Vote</button>
+        </div>
+        <div class="party">
+            <div>
+                <img src="https://via.placeholder.com/80x80.png?text=YSRCP" alt="YSRCP Symbol" class="party-symbol">
+                <p class="party-label">YSRCP</p>
+            </div>
+            <button class="button" onclick="selectVote('YSRCP')">Vote</button>
+        </div>
+    </div>
+
+    <!-- Vote Confirmation -->
+    <div id="vote-confirmation" class="container">
+        <h2>Confirm Your Vote</h2>
+        <p id="selectedVote">You have selected: </p>
+        <button class="button" onclick="confirmVote()">Confirm</button>
+        <button class="button" onclick="cancelVote()">Cancel</button>
+    </div>
+
+    <!-- Vote Slip -->
+    <div id="vote-slip" class="container">
+        <h2>Your Vote Slip</h2>
+        <p id="voteSlipDetails"></p>
+    </div>
+
+    <!-- Admin Login -->
+    <div id="admin-login" class="container">
+        <h2>Admin Login</h2>
+        <input type="password" id="adminPassword" class="input-field" placeholder="Enter Admin Password">
+        <button class="button" onclick="loginAdmin()">Login</button>
+        <p id="adminLoginFeedback" class="feedback"></p>
+    </div>
+
+    <!-- Admin Panel -->
+    <div id="admin-section" class="container">
+        <h2>Admin Panel</h2>
+        <button class="button" onclick="viewVoteCounts()">View Vote Counts</button>
+        <button class="button" onclick="viewVotes()">View All Votes</button>
+        <button class="button" onclick="showSection('main-menu')">Return to Home Page</button>
+        <div id="adminFeedback" class="feedback"></div>
+    </div>
+
+    <!-- JavaScript -->
+    <script>
+        const irisDatabase = ["iris123", "iris456", "iris789"];
+        const usedIrisCodes = new Set();
+        const votingBlockchain = [];
+        const adminPassword = "admin123";
+
+        let verifiedIris = null;
+        let selectedCandidate = null;
+        let irisVerifiedForVote = false; // Flag to check if Iris was verified during voting session
+
+        // Function to show different sections dynamically
+        function showSection(sectionId) {
+            document.querySelectorAll(".container").forEach(section => section.classList.remove("active"));
+            document.getElementById(sectionId).classList.add("active");
+        }
+
+        // Iris verification
+        function verifyIris() {
+            const irisInput = document.getElementById("irisData").value;
+            const feedback = document.getElementById("irisFeedback");
+
+            if (!irisInput) {
+                feedback.textContent = "Please enter an iris code!";
+                return;
+            }
+
+            if (irisDatabase.includes(irisInput)) {
+                if (usedIrisCodes.has(irisInput)) {
+                    feedback.textContent = "This iris code has already been used!";
+                } else {
+                    verifiedIris = irisInput;
+                    feedback.textContent = "Iris verified successfully! Redirecting to vote...";
+                    feedback.style.color = "green";
+                    irisVerifiedForVote = true; // Mark that Iris has been verified
+                    setTimeout(() => showSection("voting-section"), 1500);
+                }
+            } else {
+                feedback.textContent = "Invalid iris code. Please try again!";
+            }
+        }
+
+        // Vote selection
+        function selectVote(candidate) {
+            if (!verifiedIris && !irisVerifiedForVote) {
+                alert("You must verify your iris first!");
+                return;
+            }
+            selectedCandidate = candidate;
+            document.getElementById("selectedVote").textContent = `You have selected: ${candidate}`;
+            showSection("vote-confirmation");
+        }
+
+        // Confirm vote and record it
+        function confirmVote() {
+            if (!selectedCandidate) {
+                alert("No candidate selected!");
+                return;
+            }
+            const voteTime = new Date().toLocaleString();
+            votingBlockchain.push({ candidate: selectedCandidate, timestamp: voteTime });
+            document.getElementById("voteSlipDetails").innerHTML = `You voted for <strong>${selectedCandidate}</strong> on <strong>${voteTime}</strong>.`;
+            usedIrisCodes.add(verifiedIris);
+            resetVotingSession();
+            showSection("vote-slip");
+            setTimeout(() => showSection("main-menu"), 5000); // Return to home page after 5 seconds
+        }
+
+        // Cancel vote and return to voting section
+        function cancelVote() {
+            resetVotingSession();
+            irisVerifiedForVote = true;  // Skip iris scanning after cancel
+            showSection("voting-section");
+        }
+
+        // Reset session after vote
+        function resetVotingSession() {
+            verifiedIris = null;
+            selectedCandidate = null;
+        }
+
+        // Admin login
+        function loginAdmin() {
+            const enteredPassword = document.getElementById("adminPassword").value;
+            const feedback = document.getElementById("adminLoginFeedback");
+
+            if (enteredPassword === adminPassword) {
+                feedback.textContent = "Login successful!";
+                feedback.style.color = "green";
+                setTimeout(() => showSection("admin-section"), 1000);
+            } else {
+                feedback.textContent = "Incorrect password. Please try again.";
+                feedback.style.color = "red";
+            }
+        }
+
+        // View vote counts
+        function viewVoteCounts() {
+            const counts = { "TDP": 0, "JSP": 0, "YSRCP": 0 };
+            votingBlockchain.forEach(vote => {
+                counts[vote.candidate]++;
+            });
+
+            let message = "<h3>Vote Counts:</h3>";
+            for (const [party, count] of Object.entries(counts)) {
+                message += `<p>${party}: ${count} votes</p>`;
+            }
+            document.getElementById("adminFeedback").innerHTML = message;
+        }
+
+        // View all votes
+        function viewVotes() {
+            let message = "<h3>All Votes:</h3>";
+            votingBlockchain.forEach((vote, index) => {
+                message += `<p>${index + 1}. ${vote.candidate} - ${vote.timestamp}</p>`;
+            });
+            document.getElementById("adminFeedback").innerHTML = message;
+        }
+    </script>
+</body>
+
+</html>
+
+
+
+***OUTPUT:
+Student1 Acquried the resources:Rohith
+Student2 Acquried the resources:Khan
+Student3 Acquried the resources:Kojja
+Student1 Acquried the resources:Rohith
+Student2 Acquried the resources:Khan
+Student3 Acquried the resources:Kojja
